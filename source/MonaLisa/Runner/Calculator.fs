@@ -30,7 +30,7 @@ let length (xs:Solution) =
 
 //let quality (xs:Solution) = - length xs
 
-let shuffle (rng:Random) xs =
+let shuffle (rng:Random) (xs) =
     let len = xs |> Array.length
     for i in (len - 1) .. -1 .. 1 do
         let j = rng.Next(i + 1)
@@ -38,3 +38,14 @@ let shuffle (rng:Random) xs =
         xs.[j] <- xs.[i]
         xs.[i] <- temp
     xs
+
+let clone (solution:Solution) : Solution =
+    Array.copy solution
+
+let best solution1 solution2 =
+    let length1 = length solution1
+    let length2 = length solution2
+
+    match length1 <= length2 with
+    | true -> solution1
+    | false -> solution2
