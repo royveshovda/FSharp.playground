@@ -5,6 +5,12 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Runner", "Runner\Runner.fsproj", "{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFiles", "TestFiles", "{BACF3851-D484-4D7F-B898-9045AA59018B}"
+	ProjectSection(SolutionItems) = preProject
+		burma14.tsp = burma14.tsp
+		mona-lisa100K.tsp = mona-lisa100K.tsp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
