@@ -19,15 +19,23 @@ type Solution = Point []
 //    end
 
 let dist (p1:Point) (p2:Point) =
-    (p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y)
+    let x1 = float p1.X
+    let x2 = float p2.X
+    let y1 = float p1.Y
+    let y2 = float p2.Y
+    Math.Sqrt( Math.Pow((x2-x1), 2.) + Math.Pow((y2-y1), 2.))
 
-// Length: the correct distance should be the sqare root of the solution 
+let length (xs:Solution) =    
+    let generateClosedArray (xsTemp:Solution) =
+        let x' = xsTemp.[0]
+        Array.append xsTemp [|x'|]
 
-let length (xs:Solution) =
-    let len = xs |> Array.length
-    xs
+    let xs' = generateClosedArray xs
+
+    let len = xs' |> Array.length
+    xs'
     |> Seq.fold (fun (acc,prev) x ->
-        acc + dist x  xs.[prev], (prev+1)%len) (0,len-1)
+        acc + dist x  xs'.[prev], (prev+1)%len) (0.,len-1)
     |> fst
 
 //let quality (xs:Solution) = - length xs

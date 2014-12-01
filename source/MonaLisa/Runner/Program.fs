@@ -50,7 +50,7 @@ let rec mutate iterations solution =
     let mutateAndTestOne rng solution =        
         let alternative = clone solution |> shuffle rng
         let len = length alternative
-        printfn "Length: %i" len
+        printfn "Length: %f" len
         best solution alternative
 
     let rec mutateMany iteration iterations rng solution = 
@@ -66,6 +66,7 @@ let rec mutate iterations solution =
 [<EntryPoint>]
 let main argv = 
     argv |> ignore
+
     let (filename, size, linesToSkip) = file
     let original = readFile filename size linesToSkip
 
@@ -73,12 +74,12 @@ let main argv =
 
     printfn "Number of points read: %i" original.Length
     let l = length original
-    printfn "Length original: %i" l
+    printfn "Length original: %f" l
 
-    let choice = mutate 1000000 original
+    let choice = mutate 100000 original
 
     let lenBest = length choice
-    printfn "Length best solution 1: %i" lenBest
+    printfn "Length best solution 1: %f" lenBest
     printSoultion choice
     
     Console.ReadKey() |> ignore
