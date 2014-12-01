@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Runner", "Runner\Runner.fsproj", "{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}"
 EndProject
@@ -9,7 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFiles", "TestFiles", "{
 	ProjectSection(SolutionItems) = preProject
 		burma14.tsp = burma14.tsp
 		mona-lisa100K.tsp = mona-lisa100K.tsp
+		t1.txt = t1.txt
+		t2.txt = t2.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltRunner", "AltRunner\AltRunner.csproj", "{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,10 @@ Global
 		{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

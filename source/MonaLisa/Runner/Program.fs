@@ -75,7 +75,7 @@ let main argv =
     let l = length original
     printfn "Length original: %i" l
 
-    let choice = mutate 10000 original
+    let choice = mutate 1000000 original
 
     let lenBest = length choice
     printfn "Length best solution 1: %i" lenBest
