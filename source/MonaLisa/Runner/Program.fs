@@ -66,6 +66,7 @@ let rec mutate iterations solution =
 [<EntryPoint>]
 let main argv = 
     argv |> ignore
+
     let (filename, size, linesToSkip) = file
     let original = readFile filename size linesToSkip
 
@@ -75,7 +76,7 @@ let main argv =
     let l = length original
     printfn "Length original: %f" l
 
-    let choice = mutate 10000 original
+    let choice = mutate 100000 original
 
     let lenBest = length choice
     printfn "Length best solution 1: %f" lenBest
