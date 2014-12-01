@@ -4,9 +4,9 @@ open System
 
 type Point =
         struct
-            val X:float
-            val Y:float
-            new (x:float,y:float) = { X=x; Y=y }
+            val X:int
+            val Y:int
+            new (x:int,y:int) = { X=x; Y=y }
         end
 
 type Solution = Point []
@@ -21,11 +21,13 @@ type Solution = Point []
 let dist (p1:Point) (p2:Point) =
     (p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y)
 
+// Length: the correct distance should be the sqare root of the solution 
+
 let length (xs:Solution) =
     let len = xs |> Array.length
     xs
     |> Seq.fold (fun (acc,prev) x ->
-        acc + dist x xs.[prev], (prev+1)%len) (0.,len-1)
+        acc + dist x  xs.[prev], (prev+1)%len) (0,len-1)
     |> fst
 
 //let quality (xs:Solution) = - length xs

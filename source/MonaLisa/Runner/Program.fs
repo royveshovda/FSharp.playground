@@ -33,7 +33,7 @@ let readFile (filename:string) size linesToSkip =
         |> Seq.map (fun line -> line.Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " "))
         |> Seq.map (fun line ->
             let fields = line.Split(' ')
-            Point(float fields.[1],float fields.[2]))
+            Point(int fields.[1],int fields.[2]))
         |> Seq.toArray
     points
     
@@ -41,6 +41,8 @@ let file = ("..\\..\\..\\burma14.tsp", 14, 8)
 //let file = ("..\\..\\..\\mona-lisa100K.tsp", 100000, 6)
 
 
+let printSoultion (solution:Solution) =
+    Array.iter (fun (p:Point) -> printfn "%i %i" p.X p.Y) (solution)
 
 let rec mutate iterations solution =
     let rng = Random ()
@@ -48,7 +50,7 @@ let rec mutate iterations solution =
     let mutateAndTestOne rng solution =        
         let alternative = clone solution |> shuffle rng
         let len = length alternative
-        printfn "Length: %f" len
+        printfn "Length: %i" len
         best solution alternative
 
     let rec mutateMany iteration iterations rng solution = 
@@ -71,13 +73,14 @@ let main argv =
 
     printfn "Number of points read: %i" original.Length
     let l = length original
-    printfn "Length original: %f" l
+    printfn "Length original: %i" l
 
-    let choice = mutate 1000000 original
+    let choice = mutate 10000 original
 
     let lenBest = length choice
-    printfn "Length best solution 1: %f" lenBest
-
+    printfn "Length best solution 1: %i" lenBest
+    printSoultion choice
+    
     Console.ReadKey() |> ignore
 
     0 // return an integer exit code
