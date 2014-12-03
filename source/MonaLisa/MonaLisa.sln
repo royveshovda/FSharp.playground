@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Runner", "Runner\Runner.fsproj", "{0B5DFAFC-F87F-408A-BE31-7A6D07CC8C1F}"
 EndProject
@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFiles", "TestFiles", "{
 	ProjectSection(SolutionItems) = preProject
 		burma14.tsp = burma14.tsp
 		mona-lisa100K.tsp = mona-lisa100K.tsp
+		Show.html = Show.html
 		t1.txt = t1.txt
 		t2.txt = t2.txt
 	EndProjectSection

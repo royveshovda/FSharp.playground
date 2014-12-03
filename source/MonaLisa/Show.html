@@ -21,6 +21,13 @@
         var canvasHeight = canvas.height;
         var ctx = canvas.getContext("2d");
         var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+        // translate context to center of canvas
+        ctx.translate(0, canvas.height);
+
+        // flip context horizontally
+        ctx.scale(1, -1);
+
+       
 
         // That's how you define the value of a pixel //
         function drawPixel(x, y, r, g, b, a) {
@@ -79,16 +86,16 @@
                             if (useLines) {
                                 if (last != null) {
                                     ctx.beginPath();
-                                    ctx.moveTo(last[1] / 10, last[2] / 10);
-                                    ctx.lineTo(coord[1] / 10, coord[2] / 10);
+                                    ctx.moveTo((last[1] / 10),( last[2] / 10));
+                                    ctx.lineTo((coord[1] / 10), (coord[2] / 10));
                                     ctx.stroke();
                                 }
                             }
                             if (useDots) {
-                                drawPixel(coord[1] / 10, coord[2] / 10, 255, 0, 0, 1);
+                                drawPixel((coord[1] / 10),   (coord[2] / 10), 255, 0, 0, 1);
                             }
                             if (useNumbers) {
-                                ctx.fillText(pathCount, coord[1] / 10, coord[2] / 10);
+                                ctx.fillText(pathCount, (coord[1] / 10),   (coord[2] / 10));
                               
                             }
                             last = coord;
@@ -96,8 +103,8 @@
                             if (line == (lines.length -1) || lines[line+1].indexOf("EOF")>=0) {
                                 if (useLines) {
                                         ctx.beginPath();
-                                        ctx.moveTo(first[1] / 10, first[2] / 10);
-                                        ctx.lineTo(coord[1] / 10, coord[2] / 10);
+                                        ctx.moveTo( (first[1] / 10),  (first[2] / 10));
+                                        ctx.lineTo((coord[1] / 10),  (coord[2] / 10));
                                         ctx.stroke();
                                 }
                                 break;
