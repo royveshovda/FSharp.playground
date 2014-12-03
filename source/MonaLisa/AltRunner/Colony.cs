@@ -33,30 +33,42 @@ namespace AltRunner
 
         public void Evolve()
         {
-            var tops = Lemmings.Where(w=>w.Solution.Count() == solution.Count()).OrderBy(o => o.SolutionDistance).ToList();
-            var take = Lemmings.Count/10;
+            var numberOfIndividuals = Lemmings.Count;
+            
+            //TODO change with generation number
+
+            var keepPercent = 10;
+
+            // of keepPercent
+            var mutatePercentage = 100;
+            var crossoverPercentage = 100;
+
+
+            var bestToWorst = Lemmings.Where(w=>w.Failed == false).OrderBy(o => o.SolutionDistance).ToList();
+
             
             var offsprings = new List<Brain2>();
             
-            foreach (var lemming in tops.Take(take))
+            foreach (var lemming in bestToWorst.Take( (numberOfIndividuals / keepPercent) * (100 / mutatePercentage)))
             {
-                for (int i = 0; i < (take / 2); i++)
-                {
-                    offsprings.Add(BrainFactory.CreateMutant(lemming));
-                }
+                offsprings.Add(BrainFactory.CreateMutant(lemming));
+            
             }
 
             Brain2 last = null;
-            foreach (var lemming in tops.Take(take * 5))
+            foreach (var lemming in bestToWorst.Take((numberOfIndividuals / keepPercent) * (100 / crossoverPercentage)))
             {
                 if (last != null)
                 {
-                    offsprings.Add(BrainFactory.CreateCrossover(last,lemming));
+                    offsprings.Add(BrainFactory.CreateCrossover(last, lemming));
+                    offsprings.Add(BrainFactory.CreateCrossover(lemming, last));
                 }
                 last = lemming;
+
             }
 
-            var missing = Lemmings.Count - (tops.Take(take).Count() + offsprings.Count);
+
+            var missing = numberOfIndividuals - (bestToWorst.Take(numberOfIndividuals / keepPercent).Count() + offsprings.Count);
 
             if (missing < Lemmings.Count)
             {
@@ -66,9 +78,9 @@ namespace AltRunner
                 }
             }
 
-            Lemmings = tops.Take(take).Concat(offsprings).ToList();
+            Lemmings = bestToWorst.Take(numberOfIndividuals / keepPercent).Concat(offsprings).ToList();
             
-            var top3 = tops.Take(1);
+            var top3 = bestToWorst.Take(1);
             Console.WriteLine("Best of generation " + Generation);
 
             foreach (var lemming in top3)

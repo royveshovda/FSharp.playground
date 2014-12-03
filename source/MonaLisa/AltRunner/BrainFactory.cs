@@ -114,6 +114,7 @@ namespace AltRunner
         }
 
 
+        //TODO better crossover
         public static Brain2 CreateCrossover(Brain2 brain1, Brain2 brain2)
         {
             var copy = Copy(brain1);

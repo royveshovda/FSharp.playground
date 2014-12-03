@@ -33,8 +33,8 @@ namespace AltRunner
             //Proper test
             if (realTest)
             {
-           //     var monaLisa = global::Program.readFile("..\\..\\..\\mona-lisa100K.tsp", 100000, 6);
-                var monaLisa = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
+                var monaLisa = global::Program.readFile("..\\..\\..\\mona-lisa100K.tsp", 100000, 6);
+           //     var monaLisa = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
            
                 var winnerBrain = BrainFactory.LoadBrain(fileName);
                 winnerBrain.Think(monaLisa.ToList());
@@ -64,37 +64,45 @@ namespace AltRunner
             var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
             var col = new Colony(t);
       
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 col.Lemmings.Add(BrainFactory.CreateNew());
             }
 
             var bestRes = new List<Calculator.Point>();
             Brain2 bestBrain = null;
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 5000; i++)
             {
                 col.RunAll();
                 if (col.BestResult != null && (bestRes.Any() == false  || col.BestBrain.SolutionDistance < bestDistance))
                 {
-                    bestRes = col.BestResult.ToList();
-                    bestDistance = col.BestBrain.SolutionDistance;
-                    bestBrain = BrainFactory.Copy(col.BestBrain);
+                    //bestRes = col.BestResult.ToList();
+                    //bestDistance = col.BestBrain.SolutionDistance;
+                    //bestBrain = BrainFactory.Copy(col.BestBrain);
                     
-                    bestBrain.Think(t.ToList());
+                
                 }
                 col.Evolve();
             }
-          
+
+            bestRes = col.BestResult.ToList();
+            bestDistance = col.BestBrain.SolutionDistance;
+            bestBrain = BrainFactory.Copy(col.BestBrain);
+                    
             Console.WriteLine("Winner algorithm:\n====================================");
             Console.WriteLine("Winner brain saved at " + BrainFactory.SaveBrain(bestBrain));
 
             Console.WriteLine(bestDistance);
 //            File.WriteAllText("Winner.txt", winnerAlgorithm);
-          
+
+            
             for (int i = 0; i < bestRes.Count; i++)
             {
-                Console.WriteLine("\n{0:0} {1:00000} {2:00000}", i, bestRes[i].X, bestRes[i].Y);
+                Console.WriteLine("{0:0} {1:00000} {2:00000}", i, bestRes[i].X, bestRes[i].Y);
             }
+            
+            if (bestBrain != null) bestBrain.Think(t.ToList());
+            
             var length = Calculator.length(t);
             Console.ReadLine();
         }
