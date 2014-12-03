@@ -64,7 +64,7 @@ namespace AltRunner
 
             var bestRes = new List<Calculator.Point>();
             Brain2 bestBrain = null;
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 150; i++)
             {
                 col.RunAll();
                 if (col.BestResult != null && (bestRes.Any() == false  || col.BestBrain.SolutionDistance < bestDistance))

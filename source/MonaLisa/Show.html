@@ -21,11 +21,11 @@
         var canvasHeight = canvas.height;
         var ctx = canvas.getContext("2d");
         var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-        // translate context to center of canvas
-        ctx.translate(0, canvas.height);
+        //// translate context to center of canvas
+        //ctx.translate(0, canvas.height);
 
-        // flip context horizontally
-        ctx.scale(1, -1);
+        //// flip context horizontally
+        //ctx.scale(1, -1);
 
        
 
@@ -54,14 +54,11 @@
 
             // files is a FileList of File objects. List some properties.
             var output = [];
+            var coords = [];
             for (var i = 0, f; f = files[i]; i++) {
-
-
                 var reader = new FileReader();
                 reader.onload = function (progressEvent) {
-                    // Entire file
-                    console.log(this.result);
-
+            
                     // By lines
                     var lines = this.result.split('\n');
                     
@@ -71,7 +68,7 @@
                     for (var line = 0; line < lines.length; line++) {
                         
                         if (!isNaN(lines[line].charAt(0))) {
-                            pathCount++;
+                            
                             
                             var coord = lines[line].split(" ");
 
@@ -79,38 +76,63 @@
                                 coord.unshift("0");
                             }
 
-                            if (first == null) {
-                                first = coord;
-                            }
-
-                            if (useLines) {
-                                if (last != null) {
-                                    ctx.beginPath();
-                                    ctx.moveTo((last[1] / 10),( last[2] / 10));
-                                    ctx.lineTo((coord[1] / 10), (coord[2] / 10));
-                                    ctx.stroke();
-                                }
-                            }
-                            if (useDots) {
-                                drawPixel((coord[1] / 10),   (coord[2] / 10), 255, 0, 0, 1);
-                            }
-                            if (useNumbers) {
-                                ctx.fillText(pathCount, (coord[1] / 10),   (coord[2] / 10));
-                              
-                            }
-                            last = coord;
-
-                            if (line == (lines.length -1) || lines[line+1].indexOf("EOF")>=0) {
-                                if (useLines) {
-                                        ctx.beginPath();
-                                        ctx.moveTo( (first[1] / 10),  (first[2] / 10));
-                                        ctx.lineTo((coord[1] / 10),  (coord[2] / 10));
-                                        ctx.stroke();
-                                }
+                            coords.push(coord);
+                            if (line == (lines.length - 1) || lines[line + 1].indexOf("EOF") >= 0) {
                                 break;
                             }
+
                         }
-                        console.log(lines[line]);
+                    }
+
+
+                    var maxX = Math.max.apply(Math, coords.map(function (o) { return o[1]; }));
+                    var maxY = Math.max.apply(Math, coords.map(function (o) { return o[2]; }));
+
+                    var facX = maxX / 2000;
+                    var facY = maxY / 2000;
+
+                    var minX = ((Math.min.apply(Math, coords.map(function (o) { return o[1]; }))) / facX) - 50;
+                    var minY = -50; //Math.min.apply(Math, coords.map(function (o) { return o[2]; })) - 10;
+
+
+                    for (var c = 0; i < coords.length  ; c++) {
+                        coord = coords[c];
+                        pathCount++;
+                        if (first == null) {
+                            first = coord;
+                        }
+
+                        if (useLines) {
+                            if (last != null) {
+                                ctx.beginPath();
+                                ctx.moveTo((last[1] / facX) - minX, (2000 - (last[2] / facY)) - minY);
+                                ctx.lineTo((coord[1] / facX) - minX, (2000 - (coord[2] / facY)) - minY);
+                                ctx.stroke();
+                            }
+                        }
+                        if (useDots) {
+                            drawPixel((coord[1] / facX) - minX, (2000 - (coord[2] / facY)) - minY, 255, 0, 0, 1);
+                        }
+                        if (useNumbers) {
+                            ctx.fillText(pathCount, (coord[1] / facX) - minX, (2000 - (coord[2] / facY)) -minY);
+
+                        }
+
+                        last = coord;
+
+                        if (c == (coords.length - 1)) {
+                            if (useLines) {
+                                ctx.beginPath();
+                                ctx.moveTo((first[1] / facX) - minX, (2000 - (first[2] / facY)) - minY);
+                                ctx.lineTo((coord[1] / facX) - minX, (2000 - (coord[2] / facY)) - minY);
+                                ctx.stroke();
+                            }
+                            break;
+                        }
+
+
+
+
                     }
                    
                 };
