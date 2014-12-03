@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <span>Use Lines</span>
+    <input type="checkbox" id="useLines">
+    <span>Use dots</span>
+    <input type="checkbox" id="useDots" checked="checked">
+    <span>Use numbers</span>
+    <input type="checkbox" id="useNumbers" >
+
+    <div id="drop_zone">Drop files here</div>
+    <output id="list"></output>
+    <canvas id="draw" width="2000" height="2000"></canvas>
+    <script>
+
+        var canvas = document.getElementById("draw");
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
+        var ctx = canvas.getContext("2d");
+        var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+
+        // That's how you define the value of a pixel //
+        function drawPixel(x, y, r, g, b, a) {
+            ctx.fillRect(x, y, 5, 5);
+        }
+
+
+        // That's how you update the canvas, so that your //
+        // modification are taken in consideration //
+        function updateCanvas() {
+            ctx.putImageData(canvasData, 0, 0);
+        }
+
+        function handleFileSelect(evt) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            var useLines = document.getElementById("useLines").checked;
+            var useDots = document.getElementById("useDots").checked;
+            var useNumbers = document.getElementById("useNumbers").checked;
+
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            var files = evt.dataTransfer.files; // FileList object.
+
+            // files is a FileList of File objects. List some properties.
+            var output = [];
+            for (var i = 0, f; f = files[i]; i++) {
+
+
+                var reader = new FileReader();
+                reader.onload = function (progressEvent) {
+                    // Entire file
+                    console.log(this.result);
+
+                    // By lines
+                    var lines = this.result.split('\n');
+                    
+                    var last = null;
+                    var pathCount = 0;
+                    var first = null;
+                    for (var line = 0; line < lines.length; line++) {
+                        
+                        if (!isNaN(lines[line].charAt(0))) {
+                            pathCount++;
+                            
+                            var coord = lines[line].split(" ");
+
+                            if (coord.length == 2) {
+                                coord.unshift("0");
+                            }
+
+                            if (first == null) {
+                                first = coord;
+                            }
+
+                            if (useLines) {
+                                if (last != null) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(last[1] / 10, last[2] / 10);
+                                    ctx.lineTo(coord[1] / 10, coord[2] / 10);
+                                    ctx.stroke();
+                                }
+                            }
+                            if (useDots) {
+                                drawPixel(coord[1] / 10, coord[2] / 10, 255, 0, 0, 1);
+                            }
+                            if (useNumbers) {
+                                ctx.fillText(pathCount, coord[1] / 10, coord[2] / 10);
+                              
+                            }
+                            last = coord;
+
+                            if (line == (lines.length -1) || lines[line+1].indexOf("EOF")>=0) {
+                                if (useLines) {
+                                        ctx.beginPath();
+                                        ctx.moveTo(first[1] / 10, first[2] / 10);
+                                        ctx.lineTo(coord[1] / 10, coord[2] / 10);
+                                        ctx.stroke();
+                                }
+                                break;
+                            }
+                        }
+                        console.log(lines[line]);
+                    }
+                   
+                };
+                reader.readAsText(f);
+
+                //output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                //    f.size, ' bytes, last modified: ',
+                //    f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                //    '</li>');
+            }
+            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+
+        }
+
+        function handleDragOver(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        }
+
+        // Setup the dnd listeners.
+        var dropZone = document.getElementById('drop_zone');
+        dropZone.addEventListener('dragover', handleDragOver, false);
+        dropZone.addEventListener('drop', handleFileSelect, false);
+    </script>
+</body>
+</html>
