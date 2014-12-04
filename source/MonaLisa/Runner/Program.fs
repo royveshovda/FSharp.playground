@@ -41,46 +41,34 @@ let file = ("..\\..\\..\\burma14.tsp", 14, 8)
 //let file = ("..\\..\\..\\mona-lisa100K.tsp", 100000, 6)
 
 
-let printSoultion (solution:Solution) =
-    Array.iter (fun (p:Point) -> printfn "%f %f" p.X p.Y) (solution)
-
-let rec mutate iterations solution =
-    let rng = Random ()
-
-    let mutateAndTestOne rng solution =        
-        let alternative = clone solution |> shuffle rng
-        let len = length alternative
-        printfn "Length: %f" len
-        best solution alternative
-
-    let rec mutateMany iteration iterations rng solution = 
-        printf "Test %i  :" iteration
-        match iteration >= iterations with
-        | true -> solution
-        | false ->
-            let next = mutateAndTestOne rng solution
-            mutateMany (iteration+1) iterations rng next
-
-    mutateMany 0 iterations rng solution
+let printSoultion (solution:Point list) =
+    List.iter (fun (p:Point) -> printfn "%f %f" p.X p.Y) (solution)
 
 [<EntryPoint>]
 let main argv = 
     argv |> ignore
 
-    let (filename, size, linesToSkip) = file
-    let original = readFile filename size linesToSkip
+    let arr = [|
+        new Point(16.47, 96.10);
+        new Point(16.47, 94.44);
+        new Point(20.09, 94.55);
+        new Point(20.09, 92.54);
+        new Point(22.39, 93.37);
+        new Point(25.23, 97.24);
+        new Point(22.00, 96.05);
+        new Point(21.52, 95.59);
+        new Point(20.47, 97.02);
+        new Point(19.41, 97.13);
+        new Point(17.20, 96.29);
+        new Point(16.53, 97.38);
+        new Point(16.30, 97.38);
+        new Point(14.05, 98.12)|]
 
-    let rng = Random ()
+    let tempLength1 = length arr
+    let tempLength2 = length2 arr
 
-    printfn "Number of points read: %i" original.Length
-    let l = length original
-    printfn "Length original: %f" l
-
-    let choice = mutate 100000 original
-
-    let lenBest = length choice
-    printfn "Length best solution 1: %f" lenBest
-    printSoultion choice
+    printfn "Length1: %f" tempLength1
+    printfn "Length2: %f" tempLength2
     
     Console.ReadKey() |> ignore
 
