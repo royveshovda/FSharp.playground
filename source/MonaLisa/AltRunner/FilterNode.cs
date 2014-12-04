@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace AltRunner
 {
-    public class Filter
+    public class FilterNode
     {
-        private List<Filter> filters = new List<Filter>();
+        private List<FilterNode> filters = new List<FilterNode>();
         private List<string> history = new List<string>();
         public string Id { get; set; }
         public FilterType FilterType { get; set; }
@@ -19,7 +19,7 @@ namespace AltRunner
             set { history = value; }
         }
 
-        public List<Filter> Filters
+        public List<FilterNode> Filters
         {
             get { return filters; }
             set { filters = value; }

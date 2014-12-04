@@ -7,7 +7,9 @@ namespace AltRunner
     public class Brain2
     {
         private List<Calculator.Point> solution = new List<Calculator.Point>();
-        public List<Filter> DecisionTree { get; set; }
+        
+        
+        public FilterNode DecisionTree { get; set; }
         
         public int GetFirst { get; set; }
         
@@ -26,26 +28,30 @@ namespace AltRunner
 
         public void Think(List<Calculator.Point> problem)
         {
-            var topFilter = new Filter
-            {
-                Match = (sol, rem, par) => true,
-                Selector = 0,
-                Filters = DecisionTree,
-            };
+            //var topFilter = new FilterNode
+            //{
+            //    Match = (sol, rem, par) => true,
+            //    Selector = 0,
+            //    FilterType = FilterType.Or,
+            //    Filters = DecisionTree,
+            //};
 
             var remaining = problem.ToList();
             Solution.Clear();
             Failed = false;
 
+            
+            // Add first node to solution
             var run = BrainFactory.Selectors[GetFirst].Run(Solution, remaining);
             if (run != null)
             {
                 AddToSolution(remaining, run.Value);
             }
 
+            // while solution is not finished
             while (solution.Count < problem.Count)
             {
-                var selector = topFilter.Run(Solution, remaining);
+                var selector = DecisionTree.Run(Solution, remaining);
                 if (selector == null)
                 {
                     Failed = true;

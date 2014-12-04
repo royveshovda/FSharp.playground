@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using AutoMapper;
 using Newtonsoft.Json;
 
@@ -25,8 +26,19 @@ namespace AltRunner
         public static string SaveBrain(Brain2 brain)
         {
             var ser = JsonConvert.SerializeObject(brain);
-            var fName = "brain_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture) + ".json";
-            File.WriteAllText(fName, ser);
+            var fName = "brain_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture);
+            File.WriteAllText(fName + ".json", ser);
+            var sb = new StringBuilder();
+            int count = 0;
+            foreach (var p in brain.Solution)
+            {
+                count++;
+                sb.AppendLine(string.Format("{0:0} {1:00000} {2:00000}", count, p.X, p.Y));
+            }
+            sb.AppendLine("EOF");
+            
+            File.WriteAllText(fName + ".path", sb.ToString());
+            
             return fName;
         }
 
@@ -35,7 +47,7 @@ namespace AltRunner
             if (File.Exists(fileName))
             {
                 var brain = JsonConvert.DeserializeObject<Brain2>(File.ReadAllText(fileName));
-                var filters = BrainFactory.Flatten(brain.DecisionTree);
+                var filters = BrainFactory.Flatten(brain.DecisionTree.Filters);
                 foreach (var filter in filters)
                 {
                     var origFilter = BrainFactory.Filters.First(w => w.Value.Id == filter.Id).Value;
@@ -51,19 +63,35 @@ namespace AltRunner
         public static Brain2 CreateNew()
         {
             var res = new Brain2();
+           
             res.GetFirst = CreateGetFirst();
-            res.DecisionTree = new List<Filter>();
+            
+            var topNode = NewDecisionTree();
+
+            res.DecisionTree = topNode;
             
             for (int i = 0; i < random.Next(2) + 1; i++)
             {
                 var filter = CreateNewFilter();
-                res.DecisionTree.Add(filter);
+                res.DecisionTree.Filters.Add(filter);
             }
             
             return res;
         }
 
-        private static Filter CreateNewFilter()
+        private static FilterNode NewDecisionTree()
+        {
+            var topFilter = new FilterNode
+            {
+                Match = (sol, rem, par) => true,
+                Selector = 0,
+                FilterType = FilterType.Or,
+                Filters = new List<FilterNode>(),
+            };
+            return topFilter;
+        }
+
+        private static FilterNode CreateNewFilter()
         {
             var filter = Copy(GetRandomValue(Filters));
             filter.Selector = GetRandom(Selectors);
@@ -79,31 +107,31 @@ namespace AltRunner
         {
             var res = new Brain2();
             res.GetFirst = brain.GetFirst;
-            res.DecisionTree = new List<Filter>();
-            foreach (var filter in brain.DecisionTree)
+            res.DecisionTree = NewDecisionTree();
+            foreach (var filter in brain.DecisionTree.Filters)
             {
-                TraverseTree("copy",filter, res.DecisionTree);
+                CopyTree("copy",filter, res.DecisionTree.Filters);
             }
             return res;
         }
 
-        public static Filter Copy(Filter filter)
+        public static FilterNode Copy(FilterNode filterNode)
         {
-            var dummy = new List<Filter>();
-            TraverseTree("copy filter", filter, dummy);
+            var dummy = new List<FilterNode>();
+            CopyTree("copy FilterNode", filterNode, dummy);
             return dummy.First();
         }
 
-        public static List<Filter> Flatten(List<Filter> e)
+        public static List<FilterNode> Flatten(List<FilterNode> e)
         {
-            return e.SelectMany(c => Flatten(c.Filters)).Concat(new List<Filter> (e)).ToList();
+            return e.SelectMany(c => Flatten(c.Filters)).Concat(new List<FilterNode> (e)).ToList();
         }
 
         public static Brain2 CreateMutant(Brain2 brain)
         {
             var copy = Copy(brain);
 
-            var flattended = Flatten(brain.DecisionTree);
+            var flattended = Flatten(brain.DecisionTree.Filters);
             var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
             switch (random.Next(3))
             {
@@ -112,7 +140,7 @@ namespace AltRunner
                 //    decicionVictim.Selector = GetRandom(Selectors);
                 //    break;
                 //case 1:
-                //    decicionVictim.History.Add("Changed filter type");
+                //    decicionVictim.History.Add("Changed FilterNode type");
                 //    decicionVictim.FilterType = GetRandomValue(FilterTypes);
                 //    break;
                 //case 2:
@@ -122,8 +150,8 @@ namespace AltRunner
                 //    decicionVictim.Match = newFilter.Match;
                 //    break;
                 case 0:
-                    decicionVictim.History.Add("Added new filter");
-                    if (decicionVictim.Filters == null) decicionVictim.Filters = new List<Filter>();
+                    decicionVictim.History.Add("Added new FilterNode");
+                    if (decicionVictim.Filters == null) decicionVictim.Filters = new List<FilterNode>();
                     decicionVictim.Filters.Add(CreateNewFilter());
                     break;
                 case 1:
@@ -146,45 +174,45 @@ namespace AltRunner
         {
             var copy = Copy(brain1);
 
-            copy.DecisionTree.Clear();
-            var node1 = brain1.DecisionTree.First();
-            var node2 = brain2.DecisionTree.First();
+            copy.DecisionTree.Filters.Clear();
+            var node1 = brain1.DecisionTree.Filters.First();
+            var node2 = brain2.DecisionTree.Filters.First();
             node1.History.Add("Crossover");
             node2.History.Add("Crossover");
-            TraverseTree("crossover",node1, copy.DecisionTree);
-            TraverseTree("crossover", node2, copy.DecisionTree);
+            CopyTree("crossover", node1, copy.DecisionTree.Filters);
+            CopyTree("crossover", node2, copy.DecisionTree.Filters);
             
             return copy;
 
         }
 
         
-        private static void TraverseTree(string source, Filter sourceFilter, List<Filter> destParentList)
+        private static void CopyTree(string source, FilterNode sourceFilterNode, List<FilterNode> destParentList)
         {
-            //foreach (var h in sourceFilter.History)
+            //foreach (var h in sourceFilterNode.History)
             //{
             //    Console.WriteLine(h);
             //}
             //Console.WriteLine(source);
             
-            var filter = new Filter();
-            filter.Id = sourceFilter.Id;
-            filter.Match = sourceFilter.Match;
-            filter.Selector = sourceFilter.Selector;
-            filter.FilterType = sourceFilter.FilterType;
-            filter.History = sourceFilter.History.ToList();
+            var filter = new FilterNode();
+            filter.Id = sourceFilterNode.Id;
+            filter.Match = sourceFilterNode.Match;
+            filter.Selector = sourceFilterNode.Selector;
+            filter.FilterType = sourceFilterNode.FilterType;
+            filter.History = sourceFilterNode.History.ToList();
             
             filter.Parameter = new Parameter();
-            if (sourceFilter.Parameter != null)
+            if (sourceFilterNode.Parameter != null)
             {
-                filter.Parameter.CompletedThreshold = sourceFilter.Parameter.CompletedThreshold;
+                filter.Parameter.CompletedThreshold = sourceFilterNode.Parameter.CompletedThreshold;
             }
 
-            filter.Filters = new List<Filter>();
+            filter.Filters = new List<FilterNode>();
 
-            foreach (var filter1 in sourceFilter.Filters)
+            foreach (var filter1 in sourceFilterNode.Filters)
             {
-                TraverseTree(source, filter1, filter.Filters);
+                CopyTree(source, filter1, filter.Filters);
             }
 
             destParentList.Add(filter);
@@ -202,9 +230,9 @@ namespace AltRunner
         }
 
       
-        public static Dictionary<int, Filter> Filters = new Dictionary<int, Filter>
+        public static Dictionary<int, FilterNode> Filters = new Dictionary<int, FilterNode>
         {
-            {0, new Filter{Id = "underFilter", Match = (sol, rem, par) =>
+            {0, new FilterNode{Id = "underFilter", Match = (sol, rem, par) =>
             {
                 if (par.CompletedThreshold != null)
                 {
@@ -213,7 +241,7 @@ namespace AltRunner
                 return false;
             }}},
 
-            {1, new Filter{Id = "overFilter", Match = (sol, rem, par) =>
+            {1, new FilterNode{Id = "overFilter", Match = (sol, rem, par) =>
             {
                 if (par.CompletedThreshold != null)
                 {

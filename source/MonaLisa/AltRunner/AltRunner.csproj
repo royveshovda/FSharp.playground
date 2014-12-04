@@ -59,7 +59,7 @@
     <Compile Include="Brain2.cs" />
     <Compile Include="BrainFactory.cs" />
     <Compile Include="Generation.cs" />
-    <Compile Include="Filter.cs" />
+    <Compile Include="FilterNode.cs" />
     <Compile Include="FilterType.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Program.cs" />

@@ -55,20 +55,20 @@ namespace AltRunner
 
 
 
-            var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
+            //var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
           //  var t = global::Program.readFile("..\\..\\..\\t2.txt", 14, 8);
-            // var t = global::Program.readFile("..\\..\\..\\uruguay.tsp", 14, 7);
+             var t = global::Program.readFile("..\\..\\..\\uruguay.tsp", 734, 7);
             var test = PointFinderHelper.Length(t);
             var col = new Generation(t);
       
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 col.Lemmings.Add(BrainFactory.CreateNew());
             }
 
             var bestRes = new List<Calculator.Point>();
             Brain2 bestBrain = null;
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 100; i++)
             {
                 col.RunAll();
                 if (col.BestResult != null && (bestRes.Any() == false  || col.BestBrain.SolutionDistance < bestDistance))
@@ -87,7 +87,7 @@ namespace AltRunner
             bestBrain = BrainFactory.Copy(col.BestBrain);
                     
             Console.WriteLine("Winner algorithm:\n====================================");
-            Console.WriteLine("Winner brain saved at " + BrainFactory.SaveBrain(bestBrain));
+            Console.WriteLine("Winner brain saved at " + BrainFactory.SaveBrain(col.BestBrain));
 
             Console.WriteLine(bestDistance);
 //            File.WriteAllText("Winner.txt", winnerAlgorithm);

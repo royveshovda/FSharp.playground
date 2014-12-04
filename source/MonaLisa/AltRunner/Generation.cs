@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltRunner
 {
@@ -22,15 +23,15 @@ namespace AltRunner
 
         public Brain2 BestBrain { get { return Lemmings.Where(w => w.Failed == false && w.Solution.Count == solution.Count())
                                                 .OrderBy(d => d.SolutionDistance)
-                                                .ThenBy(o => BrainFactory.Flatten(o.DecisionTree).Count).FirstOrDefault(); } }
+                                                .ThenBy(o => BrainFactory.Flatten(o.DecisionTree.Filters).Count).FirstOrDefault(); } }
 
         public void RunAll()
         {
-            //Parallel.ForEach(Lemmings, l => l.Think(solution.ToList()));
-            for (int i = 0; i < Lemmings.Count; i++)
-            {
-                Lemmings[i].Think(solution.ToList());
-            }
+            Parallel.ForEach(Lemmings, l => l.Think(solution.ToList()));
+            //for (int i = 0; i < Lemmings.Count; i++)
+            //{
+            //    Lemmings[i].Think(solution.ToList());
+            //}
         }
 
         public void Evolve()
