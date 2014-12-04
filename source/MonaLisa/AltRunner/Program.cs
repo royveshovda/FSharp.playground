@@ -55,9 +55,9 @@ namespace AltRunner
 
 
 
-            var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
-          //  var t = global::Program.readFile("..\\..\\..\\t2.txt", 14, 8);
-            //var t = global::Program.readFile("..\\..\\..\\uruguay.tsp", 734, 7);
+            //var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
+            //var t = global::Program.readFile("..\\..\\..\\t2.txt", 14, 8);
+            var t = global::Program.readFile("..\\..\\..\\uruguay.tsp", 734, 7);
             var test = PointFinderHelper.Length(t);
             var col = new Generation(t);
       
