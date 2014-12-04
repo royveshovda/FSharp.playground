@@ -9,14 +9,7 @@ type Point =
             new (x:float,y:float) = { X=x; Y=y }
         end
 
-type Solution = Point []
-
-//type Evaluation =
-//    struct
-//        val Value:float
-//        val Solution:Solution
-//        new (value:float,solution:Solution) = { Value=value; Solution=solution }
-//    end
+type Solution = Point array
 
 let dist (p1:Point) (p2:Point) =
     let x1 = float p1.X
@@ -25,37 +18,28 @@ let dist (p1:Point) (p2:Point) =
     let y2 = float p2.Y
     Math.Sqrt( Math.Pow((x2-x1), 2.) + Math.Pow((y2-y1), 2.))
 
+
+
 let length (xs:Solution) =    
-    let generateClosedArray (xsTemp:Solution) =
-        let x' = xsTemp.[0]
-        Array.append xsTemp [|x'|]
-
-    let xs' = generateClosedArray xs
-
-    let len = xs' |> Array.length
-    xs'
-    |> Seq.fold (fun (acc,prev) x ->
-        acc + dist x  xs'.[prev], (prev+1)%len) (0.,len-1)
-    |> fst
-
-//let quality (xs:Solution) = - length xs
-
-let shuffle (rng:Random) (xs) =
     let len = xs |> Array.length
-    for i in (len - 1) .. -1 .. 1 do
-        let j = rng.Next(i + 1)
-        let temp = xs.[j]
-        xs.[j] <- xs.[i]
-        xs.[i] <- temp
     xs
 
-let clone (solution:Solution) : Solution =
-    Array.copy solution
+    |> Seq.fold (fun (acc,prev) x ->
+        acc + dist x  xs.[prev], (prev+1)%len) (0.,len-1)
+    |> fst
 
-let best solution1 solution2 =
-    let length1 = length solution1
-    let length2 = length solution2
+let length2 (xArray:Solution) =  
 
-    match length1 <= length2 with
-    | true -> solution1
-    | false -> solution2
+    let rec lengthRec (xs':Point list) acc first =
+        match xs' with
+        | x1::x2::tail ->
+            let d = dist x1 x2
+            let acc' = acc + d
+            let xs'' = x2::tail
+            lengthRec xs'' acc' first
+        | x1'::[] ->
+            acc + dist x1' first
+        | [] -> acc
+    let xs = xArray |> Array.toList
+    let firstPoint = xs.Head
+    lengthRec xs 0.0 firstPoint
