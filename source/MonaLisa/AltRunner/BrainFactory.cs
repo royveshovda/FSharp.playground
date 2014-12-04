@@ -231,8 +231,12 @@ namespace AltRunner
         {
             {0, FilterType.And},
             {1, FilterType.Or}
-        }; 
-        
+        };
+
+        private static bool IsPointSet(Calculator.Point point)
+        {
+            return (Math.Abs(point.X - 0.0) > 0 && Math.Abs(point.Y - 0.0) > 0);
+        }
         public static Dictionary<int,Selector> Selectors = new Dictionary<int, Selector>
         {
             {0, new Selector
@@ -273,6 +277,38 @@ namespace AltRunner
             {7, new Selector
             {
                 Id = "thirdNearest", Definition = (sol, rem) => { return pointFinderHelper.ThirdNearest(sol.Last(),rem); }
+            }
+            },
+            {8, new Selector
+            {
+                Id = "keepToleft", Definition = (sol, rem) =>
+                {
+                    var last = sol.Last();
+                    var orderedByDistance = rem.OrderBy(m => Calculator.dist(last, m)).Take(10).ToList();
+                    
+                    var toTheLeft = orderedByDistance.TakeWhile(p => (p.X - last.X) < 0).LastOrDefault();
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.TakeWhile(p => (p.Y - last.Y) < 0).LastOrDefault();
+                        
+                    }
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.SkipWhile(p => (p.X - last.X) <= 0).FirstOrDefault();
+
+                    }
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.SkipWhile(p => (p.Y - last.Y) <= 0).FirstOrDefault();
+                    }
+
+                    if (IsPointSet(toTheLeft))
+                    {
+                        return toTheLeft;
+                    }
+                    
+                    return null;
+                }
             }
             },
           

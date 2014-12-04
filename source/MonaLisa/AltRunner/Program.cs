@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -55,6 +56,9 @@ namespace AltRunner
 
 
             var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
+          //  var t = global::Program.readFile("..\\..\\..\\t2.txt", 14, 8);
+            // var t = global::Program.readFile("..\\..\\..\\uruguay.tsp", 14, 7);
+            var test = PointFinderHelper.Length(t);
             var col = new Generation(t);
       
             for (int i = 0; i < 10000; i++)
@@ -96,7 +100,7 @@ namespace AltRunner
             
             if (bestBrain != null) bestBrain.Think(t.ToList());
             
-            var length = Calculator.length(t);
+            
             Console.ReadLine();
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Linq;
 
 namespace AltRunner
@@ -7,6 +8,43 @@ namespace AltRunner
     public class PointFinderHelper
     {
         public static Random r =new Random();
+
+        public static double Length(IEnumerable<Calculator.Point> path)
+        {
+            var p = path.ToList();
+            if (p.Any(a => a.X > 90 || a.X < -90 || a.Y > 180 || a.Y < -180))
+            {
+                return Calculator.length(p.ToArray());
+            }
+            return GeoDistance(p);
+        }
+
+        private static double GeoDistance(IEnumerable<Calculator.Point> path)
+        {
+            double sum = 0;
+            var p = path.ToList();
+            Calculator.Point? firstPoint = null;
+            for (int i = 0; i < p.Count; i++)
+            {
+                var point = p[i];
+                if (firstPoint == null)
+                {
+                    firstPoint = point;
+                }
+                if (i == p.Count - 1)
+                {
+                    sum +=
+                        new GeoCoordinate(point.X, point.Y).GetDistanceTo(new GeoCoordinate(firstPoint.Value.X,
+                            firstPoint.Value.Y));
+                    break;
+                }
+
+                sum += new GeoCoordinate(point.X, point.Y).GetDistanceTo(new GeoCoordinate(p[i + 1].X, p[i + 1].Y));
+            }
+
+            return sum/1000;
+
+        }
 
         public List<Calculator.Point> Remaining(IEnumerable<Calculator.Point> solution, IEnumerable<Calculator.Point> taken)
         {

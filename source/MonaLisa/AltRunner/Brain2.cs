@@ -15,7 +15,7 @@ namespace AltRunner
         public bool Failed { get; set; }
         
         [JsonIgnore]
-        public double SolutionDistance { get { return Calculator.length(Solution.ToArray()); } }
+        public double SolutionDistance { get { return PointFinderHelper.Length(Solution); } }
         
         [JsonIgnore]
         public List<Calculator.Point> Solution

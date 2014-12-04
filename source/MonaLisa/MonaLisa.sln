@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFiles", "TestFiles", "{
 		Show.html = Show.html
 		t1.txt = t1.txt
 		t2.txt = t2.txt
+		uruguay.tsp = uruguay.tsp
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltRunner", "AltRunner\AltRunner.csproj", "{865AEFC0-6539-4BBF-B8D7-0382123DEDD1}"
