@@ -13,6 +13,17 @@ namespace AltRunner
         public FilterType FilterType { get; set; }
         public Parameter Parameter { get; set; }
 
+        public FilterNode Clone()
+        {
+            var temp = new FilterNode();
+            temp.Filters = this.Filters.ToList();
+            temp.FilterType = this.FilterType;
+            temp.History = this.History.ToList();
+            temp.Parameter = this.Parameter != null ? this.Parameter.Clone() : null;
+            temp.Id = this.Id;
+            return temp;
+        }
+
         public List<string> History
         {
             get { return history; }
@@ -75,5 +86,10 @@ namespace AltRunner
     public class Parameter
     {
         public double? CompletedThreshold { get; set; }
+
+        public Parameter Clone()
+        {
+            return new Parameter {CompletedThreshold = CompletedThreshold};
+        }
     }
 }

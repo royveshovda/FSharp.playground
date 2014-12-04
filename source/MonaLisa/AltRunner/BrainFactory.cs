@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -127,6 +128,13 @@ namespace AltRunner
             return e.SelectMany(c => Flatten(c.Filters)).Concat(new List<FilterNode> (e)).ToList();
         }
 
+        public static List<FilterNode> Flatten(FilterNode e)
+        {
+            var list = e.Filters.SelectMany(c => Flatten(c.Filters)).ToList();
+            list.Insert(0,e);
+            return list;
+        }
+
         public static Brain2 CreateMutant(Brain2 brain)
         {
             var copy = Copy(brain);
@@ -170,7 +178,7 @@ namespace AltRunner
 
 
         //TODO better crossover
-        public static Brain2 CreateCrossover(Brain2 brain1, Brain2 brain2)
+        public static Brain2 CreateCrossoverOLD(Brain2 brain1, Brain2 brain2)
         {
             var copy = Copy(brain1);
 
@@ -184,6 +192,42 @@ namespace AltRunner
             
             return copy;
 
+        }
+
+        public static Tuple<Brain2, Brain2> CreateCrossover(Brain2 brain1, Brain2 brain2)
+        {
+            var list1 = Flatten(brain1.DecisionTree);
+            var list2 = Flatten(brain2.DecisionTree);
+
+            var splitPoint1 = 0;
+            if (list1.Count > 2)
+                splitPoint1 = random.Next(1, list1.Count - 2);
+
+            var splitPoint2 = 0;
+            if(list2.Count > 2)
+                splitPoint2 = random.Next(1, list2.Count-2);
+
+            var node1 = list1[splitPoint1];
+            var node2 = list2[splitPoint2];
+
+            var tempPoint1 = node1.Clone();
+            var tempPoint2 = node2.Clone();
+
+            node1.Id = tempPoint2.Id;
+            node1.History = tempPoint2.History;
+            node1.FilterType = tempPoint2.FilterType;
+            node1.Filters = tempPoint2.Filters;
+            node1.Parameter = tempPoint2.Parameter;
+            node1.History.Add("Crossover");
+
+            node2.Id = tempPoint1.Id;
+            node2.History = tempPoint1.History;
+            node2.FilterType = tempPoint1.FilterType;
+            node2.Filters = tempPoint1.Filters;
+            node2.Parameter = tempPoint1.Parameter;
+            node2.History.Add("Crossover");
+
+            return new Tuple<Brain2, Brain2>(brain1, brain2);
         }
 
         
