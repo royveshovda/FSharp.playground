@@ -20,7 +20,9 @@ namespace AltRunner
             
         } }
 
-        public Brain2 BestBrain { get { return Lemmings.Where(w => w.Failed == false && w.Solution.Count == solution.Count()).OrderBy(d => d.SolutionDistance).FirstOrDefault(); } }
+        public Brain2 BestBrain { get { return Lemmings.Where(w => w.Failed == false && w.Solution.Count == solution.Count())
+                                                .OrderBy(d => d.SolutionDistance)
+                                                .ThenBy(o => BrainFactory.Flatten(o.DecisionTree).Count).FirstOrDefault(); } }
 
         public void RunAll()
         {
@@ -70,7 +72,7 @@ namespace AltRunner
 
             var missing = numberOfIndividuals - (bestToWorst.Take(numberOfIndividuals / keepPercent).Count() + offsprings.Count);
 
-            if (missing < Lemmings.Count)
+            if (missing > 0)
             {
                 for (int i = 0; i < missing; i++)
                 {

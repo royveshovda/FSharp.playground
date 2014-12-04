@@ -28,7 +28,7 @@ namespace AltRunner
         {
             var topFilter = new Filter
             {
-                Match = (sol, rem) => true,
+                Match = (sol, rem, par) => true,
                 Selector = 0,
                 Filters = DecisionTree,
             };

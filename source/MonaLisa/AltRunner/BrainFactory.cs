@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using AutoMapper;
 using Newtonsoft.Json;
 
 namespace AltRunner
@@ -11,7 +12,11 @@ namespace AltRunner
     {
         static Random random = new Random();
         static AltCalulator helper = new AltCalulator();
-        
+
+        static BrainFactory()
+        {
+            Mapper.CreateMap<Parameter, Parameter>();
+        }
         public static int CreateGetFirst()
         {
             return 0;
@@ -60,9 +65,12 @@ namespace AltRunner
 
         private static Filter CreateNewFilter()
         {
-            var filter = GetRandomValue(Filters);
+            var filter = Copy(GetRandomValue(Filters));
             filter.Selector = GetRandom(Selectors);
             filter.FilterType = GetRandomValue(FilterTypes);
+            filter.Parameter = new Parameter();
+            filter.Parameter.CompletedThreshold = random.Next(100)/100.0;
+
             return filter;
 
         }
@@ -74,12 +82,19 @@ namespace AltRunner
             res.DecisionTree = new List<Filter>();
             foreach (var filter in brain.DecisionTree)
             {
-                TraverseTree(filter, res.DecisionTree);
+                TraverseTree("copy",filter, res.DecisionTree);
             }
             return res;
         }
-        
-        static List<Filter> Flatten(List<Filter> e)
+
+        public static Filter Copy(Filter filter)
+        {
+            var dummy = new List<Filter>();
+            TraverseTree("copy filter", filter, dummy);
+            return dummy.First();
+        }
+
+        public static List<Filter> Flatten(List<Filter> e)
         {
             return e.SelectMany(c => Flatten(c.Filters)).Concat(new List<Filter> (e)).ToList();
         }
@@ -92,23 +107,35 @@ namespace AltRunner
             var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
             switch (random.Next(3))
             {
+                //case 0:
+                //    decicionVictim.History.Add("Changed selector");
+                //    decicionVictim.Selector = GetRandom(Selectors);
+                //    break;
+                //case 1:
+                //    decicionVictim.History.Add("Changed filter type");
+                //    decicionVictim.FilterType = GetRandomValue(FilterTypes);
+                //    break;
+                //case 2:
+                //    decicionVictim.History.Add("Changed match logic");
+                //    var newFilter = GetRandomValue(Filters);
+                //    decicionVictim.FilterType = newFilter.FilterType;
+                //    decicionVictim.Match = newFilter.Match;
+                //    break;
                 case 0:
-                    decicionVictim.Selector = GetRandom(Selectors);
-                    break;
-                case 1:
-                    decicionVictim.FilterType = GetRandomValue(FilterTypes);
-                    break;
-                case 2:
-                    var newFilter = GetRandomValue(Filters);
-                    decicionVictim.FilterType = newFilter.FilterType;
-                    decicionVictim.Match = newFilter.Match;
-                    break;
-                case 3:
+                    decicionVictim.History.Add("Added new filter");
                     if (decicionVictim.Filters == null) decicionVictim.Filters = new List<Filter>();
                     decicionVictim.Filters.Add(CreateNewFilter());
                     break;
+                case 1:
+                    decicionVictim.History.Add("Increased completed threshold");
+                    decicionVictim.Parameter.CompletedThreshold += 0.05;
+                    break;
+                case 2:
+                    decicionVictim.History.Add("Decreased completed threshold");
+                    decicionVictim.Parameter.CompletedThreshold -= 0.05;
+                    break;
             }
-
+            
             return copy;
 
         }
@@ -120,26 +147,44 @@ namespace AltRunner
             var copy = Copy(brain1);
 
             copy.DecisionTree.Clear();
-            
-            TraverseTree(brain1.DecisionTree.First(), copy.DecisionTree);
-            TraverseTree(brain2.DecisionTree.First(), copy.DecisionTree);
+            var node1 = brain1.DecisionTree.First();
+            var node2 = brain2.DecisionTree.First();
+            node1.History.Add("Crossover");
+            node2.History.Add("Crossover");
+            TraverseTree("crossover",node1, copy.DecisionTree);
+            TraverseTree("crossover", node2, copy.DecisionTree);
             
             return copy;
 
         }
 
-        private static void TraverseTree(Filter sourceFilter, List<Filter> destParentList)
+        
+        private static void TraverseTree(string source, Filter sourceFilter, List<Filter> destParentList)
         {
+            //foreach (var h in sourceFilter.History)
+            //{
+            //    Console.WriteLine(h);
+            //}
+            //Console.WriteLine(source);
+            
             var filter = new Filter();
             filter.Id = sourceFilter.Id;
             filter.Match = sourceFilter.Match;
             filter.Selector = sourceFilter.Selector;
             filter.FilterType = sourceFilter.FilterType;
+            filter.History = sourceFilter.History.ToList();
+            
+            filter.Parameter = new Parameter();
+            if (sourceFilter.Parameter != null)
+            {
+                filter.Parameter.CompletedThreshold = sourceFilter.Parameter.CompletedThreshold;
+            }
+
             filter.Filters = new List<Filter>();
 
             foreach (var filter1 in sourceFilter.Filters)
             {
-                TraverseTree(filter1, filter.Filters);
+                TraverseTree(source, filter1, filter.Filters);
             }
 
             destParentList.Add(filter);
@@ -159,40 +204,24 @@ namespace AltRunner
       
         public static Dictionary<int, Filter> Filters = new Dictionary<int, Filter>
         {
-            {0, new Filter{Id = "under25", Match = (sol, rem) =>
+            {0, new Filter{Id = "underFilter", Match = (sol, rem, par) =>
             {
-                return ((float)sol.Count / rem.Count) < 0.25;
-
+                if (par.CompletedThreshold != null)
+                {
+                    return ((float)sol.Count / rem.Count) < par.CompletedThreshold;
+                }
+                return false;
             }}},
 
-            {1, new Filter{Id = "under50", Match = (sol, rem) =>
+            {1, new Filter{Id = "overFilter", Match = (sol, rem, par) =>
             {
-                return ((float)sol.Count / rem.Count) < 0.50;
+                if (par.CompletedThreshold != null)
+                {
+                    return ((float)sol.Count / rem.Count) > par.CompletedThreshold;
+                }
+                return false;
 
             }}},
-
-            {2, new Filter{Id = "under75", Match = (sol, rem) =>
-            {
-                return ((float)sol.Count / rem.Count) < 0.75;
-
-            }}},
-            {3, new Filter{Id = "over25", Match = (sol, rem) =>
-            {
-                return ((float)sol.Count / rem.Count) > 0.25;
-
-            }}},
-
-            {4, new Filter{Id = "over50", Match = (sol, rem) =>
-            {
-                return ((float)sol.Count / rem.Count) > 0.50;
-
-            }}},
-
-            {5, new Filter{Id = "over75", Match = (sol, rem) =>
-            {
-                return ((float)sol.Count / rem.Count) > 0.75;
-
-            }}}
 
           
 

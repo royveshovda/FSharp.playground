@@ -8,8 +8,16 @@ namespace AltRunner
     public class Filter
     {
         private List<Filter> filters = new List<Filter>();
+        private List<string> history = new List<string>();
         public string Id { get; set; }
         public FilterType FilterType { get; set; }
+        public Parameter Parameter { get; set; }
+
+        public List<string> History
+        {
+            get { return history; }
+            set { history = value; }
+        }
 
         public List<Filter> Filters
         {
@@ -18,7 +26,7 @@ namespace AltRunner
         }
 
         [JsonIgnore]
-        public Func<List<Calculator.Point>, List<Calculator.Point>, bool> Match { get; set; }
+        public Func<List<Calculator.Point>, List<Calculator.Point>, Parameter, bool> Match { get; set; }
         
         public int Selector { get; set; }
       
@@ -27,7 +35,7 @@ namespace AltRunner
             int? res = null;
             if (Filters == null || Filters.Any() == false)
             {
-                if (Match(solution, remaining))
+                if (Match(solution, remaining, Parameter))
                 {
                     return Selector;
                 }
@@ -62,5 +70,10 @@ namespace AltRunner
             }
             return res;
         }
+    }
+
+    public class Parameter
+    {
+        public double? CompletedThreshold { get; set; }
     }
 }
