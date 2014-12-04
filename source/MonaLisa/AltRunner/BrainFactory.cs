@@ -11,7 +11,7 @@ namespace AltRunner
     public static class BrainFactory
     {
         static Random random = new Random();
-        static AltCalulator helper = new AltCalulator();
+        static PointFinderHelper pointFinderHelper = new PointFinderHelper();
 
         static BrainFactory()
         {
@@ -247,17 +247,17 @@ namespace AltRunner
             },
             {2, new Selector
             {
-                Id = "nearest", Definition = (sol, rem) => { return helper.Nearest(sol.Last(),rem); }
+                Id = "nearest", Definition = (sol, rem) => { return pointFinderHelper.Nearest(sol.Last(),rem); }
             }
             },
             {3, new Selector
             {
-                Id = "nearestAndNearHorizontal", Definition = (sol, rem) => { return helper.NearestAndNearHorizontal(sol.Last(),rem); }
+                Id = "nearestAndNearHorizontal", Definition = (sol, rem) => { return pointFinderHelper.NearestAndNearHorizontal(sol.Last(),rem); }
             }
             },
             {4, new Selector
             {
-                Id = "nearestAndNearVertical", Definition = (sol, rem) => { return helper.NearestAndNearVertical(sol.Last(),rem); }
+                Id = "nearestAndNearVertical", Definition = (sol, rem) => { return pointFinderHelper.NearestAndNearVertical(sol.Last(),rem); }
             }
             },
             {5, new Selector
@@ -267,12 +267,12 @@ namespace AltRunner
             },
             {6, new Selector
             {
-                Id = "secondNearest", Definition = (sol, rem) => { return helper.SecondNearest(sol.Last(),rem); }
+                Id = "secondNearest", Definition = (sol, rem) => { return pointFinderHelper.SecondNearest(sol.Last(),rem); }
             }
             },
             {7, new Selector
             {
-                Id = "thirdNearest", Definition = (sol, rem) => { return helper.ThirdNearest(sol.Last(),rem); }
+                Id = "thirdNearest", Definition = (sol, rem) => { return pointFinderHelper.ThirdNearest(sol.Last(),rem); }
             }
             },
           

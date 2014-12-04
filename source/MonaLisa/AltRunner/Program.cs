@@ -55,7 +55,7 @@ namespace AltRunner
 
 
             var t = global::Program.readFile("..\\..\\..\\burma14.tsp", 14, 8);
-            var col = new Colony(t);
+            var col = new Generation(t);
       
             for (int i = 0; i < 10000; i++)
             {

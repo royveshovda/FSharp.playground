@@ -4,9 +4,9 @@ open System
 
 type Point =
         struct
-            val X:int
-            val Y:int
-            new (x:int,y:int) = { X=x; Y=y }
+            val X:float
+            val Y:float
+            new (x:float,y:float) = { X=x; Y=y }
         end
 
 type Solution = Point []

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AltRunner
 {
-    public class AltCalulator
+    public class PointFinderHelper
     {
         public static Random r =new Random();
 

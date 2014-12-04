@@ -54,10 +54,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AltCalulator.cs" />
+    <Compile Include="PointFinderHelper.cs" />
     <Compile Include="Brain2.cs" />
     <Compile Include="BrainFactory.cs" />
-    <Compile Include="Colony.cs" />
+    <Compile Include="Generation.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="FilterType.cs" />
     <Compile Include="Path.cs" />

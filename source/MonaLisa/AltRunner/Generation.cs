@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace AltRunner
 {
-    public class Colony
+    public class Generation
     {
         private readonly Calculator.Point[] solution;
         public List<Brain2> Lemmings { get; set; }
-        private int Generation = 0;
+        private int generationNumber;
 
         public List<Calculator.Point> BestResult { get
         {
@@ -83,7 +83,7 @@ namespace AltRunner
             Lemmings = bestToWorst.Take(numberOfIndividuals / keepPercent).Concat(offsprings).ToList();
             
             var top3 = bestToWorst.Take(1);
-            Console.WriteLine("Best of generation " + Generation);
+            Console.WriteLine("Best of generation " + generationNumber);
 
             foreach (var lemming in top3)
             {
@@ -91,10 +91,10 @@ namespace AltRunner
             }
             Console.WriteLine("=====================\n\n\n");
             
-            Generation++;
+            generationNumber++;
         }
 
-        public Colony(Calculator.Point[] solution)
+        public Generation(Calculator.Point[] solution)
         {
             this.solution = solution.ToArray();
             Lemmings = new List<Brain2>();

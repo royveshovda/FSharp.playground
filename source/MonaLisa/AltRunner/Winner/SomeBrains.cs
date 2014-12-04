@@ -7,25 +7,25 @@ public class SomeBrains
 {
 
 
-    public Calculator.Point? GetNext(Calculator.Point? start, Calculator.Point[] sol, IEnumerable<Calculator.Point> res, AltCalulator helper)
+    public Calculator.Point? GetNext(Calculator.Point? start, Calculator.Point[] sol, IEnumerable<Calculator.Point> res, PointFinderHelper pointFinderHelper)
     {
-        if (start == null) { start = GetStartPoint(sol, helper); }
+        if (start == null) { start = GetStartPoint(sol, pointFinderHelper); }
         Calculator.Point? point = null;
-        point = helper.Nearest(start.Value, helper.Remaining(sol, res));
+        point = pointFinderHelper.Nearest(start.Value, pointFinderHelper.Remaining(sol, res));
         if (point.Value.X < start.Value.Y)
         {
             return point;
         }
         if (point.Value.Y < start.Value.X)
         {
-            point = helper.Farthest(point.Value, helper.Remaining(sol, res));
+            point = pointFinderHelper.Farthest(point.Value, pointFinderHelper.Remaining(sol, res));
         }
         return point;
     }
 
 
 
-    public Calculator.Point? GetStartPoint(Calculator.Point[] solution, AltCalulator helper)
+    public Calculator.Point? GetStartPoint(Calculator.Point[] solution, PointFinderHelper pointFinderHelper)
     {
         return solution[9];
     }

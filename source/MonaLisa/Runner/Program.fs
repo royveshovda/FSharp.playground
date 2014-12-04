@@ -33,7 +33,7 @@ let readFile (filename:string) size linesToSkip =
         |> Seq.map (fun line -> line.Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " "))
         |> Seq.map (fun line ->
             let fields = line.Split(' ')
-            Point(int fields.[1],int fields.[2]))
+            Point(float fields.[1],float fields.[2]))
         |> Seq.toArray
     points
     
@@ -42,7 +42,7 @@ let file = ("..\\..\\..\\burma14.tsp", 14, 8)
 
 
 let printSoultion (solution:Solution) =
-    Array.iter (fun (p:Point) -> printfn "%i %i" p.X p.Y) (solution)
+    Array.iter (fun (p:Point) -> printfn "%f %f" p.X p.Y) (solution)
 
 let rec mutate iterations solution =
     let rng = Random ()
