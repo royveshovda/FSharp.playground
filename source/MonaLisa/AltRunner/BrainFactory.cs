@@ -142,7 +142,7 @@ namespace AltRunner
             var copy = Copy(brain);
 
             var flattended = Flatten(brain.DecisionTree);
-            //var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
+            var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
             switch (random.Next(5))
             {
                 //case 0:
@@ -205,8 +205,10 @@ namespace AltRunner
 
         public static Tuple<Brain2, Brain2> CreateCrossover(Brain2 brain1, Brain2 brain2)
         {
-            var list1 = Flatten(brain1.DecisionTree);
-            var list2 = Flatten(brain2.DecisionTree);
+            var cross1 = Copy(brain1);
+            var cross2 = Copy(brain2);
+            var list1 = Flatten(cross1.DecisionTree);
+            var list2 = Flatten(cross2.DecisionTree);
 
             var splitPoint1 = random.Next(0, list1.Count-1);
             var splitPoint2 = random.Next(0, list2.Count-1);
@@ -231,7 +233,7 @@ namespace AltRunner
             node2.Parameter = tempNode1.Parameter;
             node2.History.Add("Crossover");
 
-            return new Tuple<Brain2, Brain2>(brain1, brain2);
+            return new Tuple<Brain2, Brain2>(cross1, cross2);
         }
 
         
@@ -302,6 +304,10 @@ namespace AltRunner
 
             {2, new FilterNode{Id = "overAngle", Match = (sol, rem, par) =>
             {
+                if (sol.Count < 2)
+                {
+                    return true;
+                }
                 if (FindAngle(sol) > par.AngleThreshold)
                 {
                     return true;
@@ -312,6 +318,10 @@ namespace AltRunner
             }}},
             {3, new FilterNode{Id = "underAngle", Match = (sol, rem, par) =>
             {
+                if (sol.Count < 2)
+                {
+                    return true;
+                }   
                 if (FindAngle(sol) < par.AngleThreshold)
 
                 {

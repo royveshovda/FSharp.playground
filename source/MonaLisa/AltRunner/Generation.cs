@@ -34,17 +34,17 @@ namespace AltRunner
             //}
         }
 
-        public void Evolve()
+        public void Evolve(double completed)
         {
             var numberOfIndividuals = Lemmings.Count;
             
             //TODO change with generation number
 
-            var keepPercent = 10;
+            // 10% keep, 45% mutated, 25% crossover. The rest (20%) are new guys
+            var keepPercent = 10; 
+            var mutatePercentage = (45 - completed);
+            var crossoverPercentage = (25 - completed) / 2;
 
-            // of keepPercent
-            var mutatePercentage = 100;
-            var crossoverPercentage = 100;
 
 
             var bestToWorst = Lemmings.Where(w=>w.Failed == false).OrderBy(o => o.SolutionDistance).ToList();
@@ -52,14 +52,14 @@ namespace AltRunner
             
             var offsprings = new List<Brain2>();
             
-            foreach (var lemming in bestToWorst.Take( (numberOfIndividuals / keepPercent) * (100 / mutatePercentage)))
+            foreach (var lemming in bestToWorst.Take(Convert.ToInt32(numberOfIndividuals * (mutatePercentage / 100))))
             {
                 offsprings.Add(BrainFactory.CreateMutant(lemming));
             
             }
 
             Brain2 last = null;
-            foreach (var lemming in bestToWorst.Take((numberOfIndividuals / keepPercent) * (100 / crossoverPercentage)))
+            foreach (var lemming in bestToWorst.Take(Convert.ToInt32(numberOfIndividuals * (crossoverPercentage / 100))))
             {
                 if (last != null)
                 {
