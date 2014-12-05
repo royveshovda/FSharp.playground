@@ -140,7 +140,7 @@ namespace AltRunner
         {
             var copy = Copy(brain);
 
-            var flattended = Flatten(brain.DecisionTree.Filters);
+            var flattended = Flatten(brain.DecisionTree);
             //var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
             var decicionVictim = flattended.Skip(random.Next(flattended.Count)).First();
             switch (random.Next(3))
@@ -179,7 +179,6 @@ namespace AltRunner
         }
 
 
-        //TODO better crossover
         public static Brain2 CreateCrossoverOLD(Brain2 brain1, Brain2 brain2)
         {
             var copy = Copy(brain1);
@@ -201,32 +200,27 @@ namespace AltRunner
             var list1 = Flatten(brain1.DecisionTree);
             var list2 = Flatten(brain2.DecisionTree);
 
-            var splitPoint1 = 0;
-            if (list1.Count > 2)
-                splitPoint1 = random.Next(1, list1.Count - 2);
-
-            var splitPoint2 = 0;
-            if(list2.Count > 2)
-                splitPoint2 = random.Next(1, list2.Count-2);
+            var splitPoint1 = random.Next(0, list1.Count-1);
+            var splitPoint2 = random.Next(0, list2.Count-1);
 
             var node1 = list1[splitPoint1];
             var node2 = list2[splitPoint2];
 
-            var tempPoint1 = node1.Clone();
-            var tempPoint2 = node2.Clone();
+            var tempNode1 = node1.Clone();
+            var tempNode2 = node2.Clone();
 
-            node1.Id = tempPoint2.Id;
-            node1.History = tempPoint2.History;
-            node1.FilterType = tempPoint2.FilterType;
-            node1.Filters = tempPoint2.Filters;
-            node1.Parameter = tempPoint2.Parameter;
+            node1.Id = tempNode2.Id;
+            node1.History = tempNode2.History;
+            node1.FilterType = tempNode2.FilterType;
+            node1.Filters = tempNode2.Filters;
+            node1.Parameter = tempNode2.Parameter;
             node1.History.Add("Crossover");
 
-            node2.Id = tempPoint1.Id;
-            node2.History = tempPoint1.History;
-            node2.FilterType = tempPoint1.FilterType;
-            node2.Filters = tempPoint1.Filters;
-            node2.Parameter = tempPoint1.Parameter;
+            node2.Id = tempNode1.Id;
+            node2.History = tempNode1.History;
+            node2.FilterType = tempNode1.FilterType;
+            node2.Filters = tempNode1.Filters;
+            node2.Parameter = tempNode1.Parameter;
             node2.History.Add("Crossover");
 
             return new Tuple<Brain2, Brain2>(brain1, brain2);
@@ -326,12 +320,22 @@ namespace AltRunner
             },
             {2, new Selector
             {
-                Id = "nearest", Definition = (sol, rem) => { return pointFinderHelper.Nearest(sol.Last(),rem); }
+                Id = "nearest", Definition = (sol, rem) =>
+                {
+                    var last = sol.Last();
+                    var temp = pointFinderHelper.Nearest(last, rem);
+                    return temp;
+                }
             }
             },
             {3, new Selector
             {
-                Id = "nearestAndNearHorizontal", Definition = (sol, rem) => { return pointFinderHelper.NearestAndNearHorizontal(sol.Last(),rem); }
+                Id = "nearestAndNearHorizontal", Definition = (sol, rem) =>
+                {
+                    var last = sol.Last();
+                    var temp = pointFinderHelper.NearestAndNearHorizontal(last ,rem);
+                    return temp;
+                }
             }
             },
             {4, new Selector
@@ -341,7 +345,11 @@ namespace AltRunner
             },
             {5, new Selector
             {
-                Id = "farthest", Definition = (sol, rem) => { return rem.OrderByDescending(m => Calculator.dist(sol.Last(), m)).FirstOrDefault(); }
+                Id = "farthest", Definition = (sol, rem) =>
+                {
+                    var temp = rem.OrderByDescending(m => Calculator.dist(sol.Last(), m));
+                    return temp.FirstOrDefault();
+                }
             }
             },
             {6, new Selector
