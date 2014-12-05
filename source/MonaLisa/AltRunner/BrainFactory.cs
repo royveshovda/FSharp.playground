@@ -22,7 +22,7 @@ namespace AltRunner
         {
             return 0;
         }
-
+    
         public static string SaveBrain(Brain2 brain)
         {
             var ser = JsonConvert.SerializeObject(brain);
@@ -98,6 +98,7 @@ namespace AltRunner
             filter.FilterType = GetRandomValue(FilterTypes);
             filter.Parameter = new Parameter();
             filter.Parameter.CompletedThreshold = random.Next(100)/100.0;
+            filter.Parameter.AngleThreshold = random.Next(360) - 180;
 
             return filter;
 
@@ -133,7 +134,7 @@ namespace AltRunner
 
             var flattended = Flatten(brain.DecisionTree.Filters);
             var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
-            switch (random.Next(3))
+            switch (random.Next(5))
             {
                 //case 0:
                 //    decicionVictim.History.Add("Changed selector");
@@ -161,6 +162,14 @@ namespace AltRunner
                 case 2:
                     decicionVictim.History.Add("Decreased completed threshold");
                     decicionVictim.Parameter.CompletedThreshold -= 0.05;
+                    break;
+                case 3:
+                    decicionVictim.History.Add("Decreased angle threshold");
+                    decicionVictim.Parameter.AngleThreshold -= 1.0;
+                    break;
+                case 4:
+                    decicionVictim.History.Add("Increase angle threshold");
+                    decicionVictim.Parameter.AngleThreshold += 1.0;
                     break;
             }
             
@@ -206,6 +215,7 @@ namespace AltRunner
             if (sourceFilterNode.Parameter != null)
             {
                 filter.Parameter.CompletedThreshold = sourceFilterNode.Parameter.CompletedThreshold;
+                filter.Parameter.AngleThreshold = sourceFilterNode.Parameter.AngleThreshold;
             }
 
             filter.Filters = new List<FilterNode>();
@@ -251,9 +261,46 @@ namespace AltRunner
 
             }}},
 
+            {2, new FilterNode{Id = "overAngle", Match = (sol, rem, par) =>
+            {
+                if (FindAngle(sol) > par.AngleThreshold)
+                {
+                    return true;
+                }
+
+                return false;
+
+            }}},
+            {3, new FilterNode{Id = "underAngle", Match = (sol, rem, par) =>
+            {
+                if (FindAngle(sol) < par.AngleThreshold)
+
+                {
+                    return true;
+                }
+
+                return false;
+
+
+            }}},
+
           
 
-        };  
+        };
+
+        private static double FindAngle(List<Calculator.Point> sol)
+        {
+            if (sol.Count < 2)
+            {
+                return 0;
+            }
+            var last = sol.Skip(sol.Count - 2).Take(2).ToList();
+
+            var xDiff = last[1].X - last[0].X;
+            var yDiff = last[1].Y - last[0].Y; 
+            return Math.Atan2(yDiff, xDiff) * (180 / Math.PI); 
+        }
+
 
         public static Dictionary<int, FilterType> FilterTypes = new Dictionary<int, FilterType>
         {
@@ -328,6 +375,39 @@ namespace AltRunner
                     if (IsPointSet(toTheLeft) == false)
                     {
                         toTheLeft = orderedByDistance.SkipWhile(p => (p.Y - last.Y) <= 0).FirstOrDefault();
+                    }
+
+                    if (IsPointSet(toTheLeft))
+                    {
+                        return toTheLeft;
+                    }
+                    
+                    return null;
+                }
+            }
+            },
+            {9, new Selector
+            {
+                Id = "keepToRight", Definition = (sol, rem) =>
+                {
+                    var last = sol.Last();
+                    var orderedByDistance = rem.OrderBy(m => Calculator.dist(last, m)).Take(10).ToList();
+                    
+                    var toTheLeft = orderedByDistance.SkipWhile(p => (p.X - last.X) <= 0).LastOrDefault();
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.SkipWhile(p => (p.Y - last.Y) <= 0).FirstOrDefault();
+                        
+                        
+                    }
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.TakeWhile(p => (p.X - last.X) < 0).FirstOrDefault();
+
+                    }
+                    if (IsPointSet(toTheLeft) == false)
+                    {
+                        toTheLeft = orderedByDistance.TakeWhile(p => (p.Y - last.Y) < 0).LastOrDefault();
                     }
 
                     if (IsPointSet(toTheLeft))

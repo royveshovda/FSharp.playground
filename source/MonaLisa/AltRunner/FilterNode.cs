@@ -75,5 +75,6 @@ namespace AltRunner
     public class Parameter
     {
         public double? CompletedThreshold { get; set; }
+        public double? AngleThreshold { get; set; }
     }
 }
