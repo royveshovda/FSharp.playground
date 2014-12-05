@@ -85,9 +85,10 @@ namespace AltRunner
             var topFilter = new FilterNode
             {
                 Match = (sol, rem, par) => true,
-                Selector = 0,
+                Selector = GetRandom(Selectors),
                 FilterType = FilterType.Or,
                 Filters = new List<FilterNode>(),
+                Parameter = new Parameter {CompletedThreshold = random.Next(100)/100.0}
             };
             return topFilter;
         }
@@ -140,7 +141,8 @@ namespace AltRunner
             var copy = Copy(brain);
 
             var flattended = Flatten(brain.DecisionTree.Filters);
-            var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
+            //var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
+            var decicionVictim = flattended.Skip(random.Next(flattended.Count)).First();
             switch (random.Next(3))
             {
                 //case 0:
@@ -309,6 +311,7 @@ namespace AltRunner
         {
             return (Math.Abs(point.X - 0.0) > 0 && Math.Abs(point.Y - 0.0) > 0);
         }
+
         public static Dictionary<int,Selector> Selectors = new Dictionary<int, Selector>
         {
             {0, new Selector

@@ -61,14 +61,14 @@ namespace AltRunner
             var test = PointFinderHelper.Length(t);
             var col = new Generation(t);
       
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 200; i++)
             {
                 col.Lemmings.Add(BrainFactory.CreateNew());
             }
 
             var bestRes = new List<Calculator.Point>();
             Brain2 bestBrain = null;
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 200; i++)
             {
                 col.RunAll();
                 if (col.BestResult != null && (bestRes.Any() == false  || col.BestBrain.SolutionDistance < bestDistance))
