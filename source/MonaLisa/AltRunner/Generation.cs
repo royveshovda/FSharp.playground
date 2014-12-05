@@ -63,8 +63,12 @@ namespace AltRunner
             {
                 if (last != null)
                 {
-                    offsprings.Add(BrainFactory.CreateCrossover(last, lemming));
-                    offsprings.Add(BrainFactory.CreateCrossover(lemming, last));
+                    Tuple<Brain2, Brain2> crossovers = BrainFactory.CreateCrossover(last, lemming);
+                    offsprings.Add(crossovers.Item1);
+                    offsprings.Add(crossovers.Item2);
+
+                    //offsprings.Add(BrainFactory.CreateCrossoverOLD(last, lemming));
+                    //offsprings.Add(BrainFactory.CreateCrossoverOLD(lemming, last));
                 }
                 last = lemming;
 

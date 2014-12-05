@@ -141,9 +141,16 @@ namespace AltRunner
         {
             var copy = Copy(brain);
 
+<<<<<<< HEAD
+            var flattended = Flatten(brain.DecisionTree.Filters);
+            var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
+            switch (random.Next(5))
+=======
             var flattended = Flatten(brain.DecisionTree);
             //var decicionVictim = flattended.Skip(random.Next(flattended.Count - 1)).First();
-            switch (random.Next(5))
+            var decicionVictim = flattended.Skip(random.Next(flattended.Count)).First();
+            switch (random.Next(3))
+>>>>>>> 1459ba44fce2090516c0f0b369db3cc36425af97
             {
                 //case 0:
                 //    decicionVictim.History.Add("Changed selector");

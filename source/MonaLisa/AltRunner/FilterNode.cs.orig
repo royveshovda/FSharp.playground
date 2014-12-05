@@ -89,7 +89,7 @@ namespace AltRunner
         public double? AngleThreshold { get; set; }
         public Parameter Clone()
         {
-            return new Parameter {CompletedThreshold = CompletedThreshold, AngleThreshold = AngleThreshold};
+            return new Parameter {CompletedThreshold = CompletedThreshold};
         }
     }
 }
