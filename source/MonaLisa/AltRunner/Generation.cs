@@ -38,7 +38,11 @@ namespace AltRunner
         {
             var numberOfIndividuals = Lemmings.Count;
             
-            //TODO change with generation number
+            //TODO: 1: Include number of nodes in fitness, so that lemmings not able to complete will get a rating
+            //TODO: 2: Evolve: Only from previous generation
+            //TODO: Consider to change number of mutations and crossovers based on generation-number
+
+
 
             // 10% keep, 45% mutated, 25% crossover. The rest (20%) are new guys
             var keepPercent = 10; 
@@ -66,9 +70,6 @@ namespace AltRunner
                     Tuple<Brain2, Brain2> crossovers = BrainFactory.CreateCrossover(last, lemming);
                     offsprings.Add(crossovers.Item1);
                     offsprings.Add(crossovers.Item2);
-
-                    //offsprings.Add(BrainFactory.CreateCrossoverOLD(last, lemming));
-                    //offsprings.Add(BrainFactory.CreateCrossoverOLD(lemming, last));
                 }
                 last = lemming;
 

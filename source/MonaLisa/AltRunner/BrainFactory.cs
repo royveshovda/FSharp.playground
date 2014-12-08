@@ -186,23 +186,6 @@ namespace AltRunner
 
         }
 
-
-        public static Brain2 CreateCrossoverOLD(Brain2 brain1, Brain2 brain2)
-        {
-            var copy = Copy(brain1);
-
-            copy.DecisionTree.Filters.Clear();
-            var node1 = brain1.DecisionTree.Filters.First();
-            var node2 = brain2.DecisionTree.Filters.First();
-            node1.History.Add("Crossover");
-            node2.History.Add("Crossover");
-            CopyTree("crossover", node1, copy.DecisionTree.Filters);
-            CopyTree("crossover", node2, copy.DecisionTree.Filters);
-            
-            return copy;
-
-        }
-
         public static Tuple<Brain2, Brain2> CreateCrossover(Brain2 brain1, Brain2 brain2)
         {
             var cross1 = Copy(brain1);
