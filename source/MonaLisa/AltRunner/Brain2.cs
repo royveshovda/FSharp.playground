@@ -26,16 +26,11 @@ namespace AltRunner
             set { solution = value; }
         }
 
+        [JsonIgnore]
+        public double FitnessValue { get; set; }
+
         public void Think(List<Calculator.Point> problem)
         {
-            //var topFilter = new FilterNode
-            //{
-            //    Match = (sol, rem, par) => true,
-            //    Selector = 0,
-            //    FilterType = FilterType.Or,
-            //    Filters = DecisionTree,
-            //};
-
             var remaining = problem.ToList();
             Solution.Clear();
             Failed = false;

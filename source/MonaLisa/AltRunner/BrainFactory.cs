@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -222,12 +221,6 @@ namespace AltRunner
         
         private static void CopyTree(string source, FilterNode sourceFilterNode, List<FilterNode> destParentList)
         {
-            //foreach (var h in sourceFilterNode.History)
-            //{
-            //    Console.WriteLine(h);
-            //}
-            //Console.WriteLine(source);
-            
             var filter = new FilterNode();
             filter.Id = sourceFilterNode.Id;
             filter.Match = sourceFilterNode.Match;
@@ -315,9 +308,6 @@ namespace AltRunner
 
 
             }}},
-
-          
-
         };
 
         private static double FindAngle(List<Calculator.Point> sol)

@@ -50,6 +50,8 @@ namespace AltRunner
             var crossoverPercentage = (25 - completed) / 2;
 
 
+            //TODO: Get fitnessNumber
+
 
             var bestToWorst = Lemmings.Where(w=>w.Failed == false).OrderBy(o => o.SolutionDistance).ToList();
 
