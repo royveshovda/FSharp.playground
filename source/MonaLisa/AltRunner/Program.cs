@@ -60,6 +60,8 @@ namespace AltRunner
             var test = PointFinderHelper.Length(t);
             var col = new Generation(t);
 
+            var lengthOfProblem = t.Length;
+
             const int numberOfLemmings = 1500;
             const int numberOfGenerations = 150;
 
@@ -81,7 +83,7 @@ namespace AltRunner
                     
                 
                 }
-                col.Evolve((double)i/numberOfGenerations);
+                col.Evolve((double)i / numberOfGenerations, lengthOfProblem);
             }
 
             bestRes = col.BestResult.ToList();

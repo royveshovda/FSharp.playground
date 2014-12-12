@@ -27,14 +27,29 @@ namespace AltRunner
 
         public void RunAll()
         {
-            Parallel.ForEach(Lemmings, l => l.Think(solution.ToList()));
-            //for (int i = 0; i < Lemmings.Count; i++)
-            //{
-            //    Lemmings[i].Think(solution.ToList());
-            //}
+            //Parallel.ForEach(Lemmings, l => l.Think(solution.ToList()));
+            for (int i = 0; i < Lemmings.Count; i++)
+            {
+                Lemmings[i].Think(solution.ToList());
+            }
         }
 
-        public void Evolve(double completed)
+        private void CalculateFitnessForAll(int lengthOfProblem)
+        {
+            foreach (var lemming in Lemmings)
+            {
+                var distance = 0.0;
+                if (!lemming.Failed)
+                {
+                    distance = lemming.SolutionDistance;
+                }
+                var missingPoint = lengthOfProblem - lemming.Solution.Count;
+
+
+            }
+        }
+
+        public void Evolve(double completed, int lengthOfProblem)
         {
             var numberOfIndividuals = Lemmings.Count;
             
@@ -49,7 +64,7 @@ namespace AltRunner
             var mutatePercentage = (45 - completed);
             var crossoverPercentage = (25 - completed) / 2;
 
-
+            CalculateFitnessForAll(lengthOfProblem);
             //TODO: Get fitnessNumber
 
 
